@@ -98,17 +98,21 @@
 
                 function convert(){
                     var data = $("#dataBox").val();
-                    try{
-                        var jsonData = JSON.parse( data );
-                        jsonToNimn(jsonData, "JSON", JSON.stringify(jsonData).length);
-                    }catch(e){
-                        //assume it XML
-                        data = data.replace(/>\s*</g, "><");
-                        if(parser.validate(data)){
-                            var jsonData = parser.parse(data,xmlOptions);
-                            jsonToNimn(jsonData, "XML", data.length);
-                        }else{
-                            displayData();
+                    if(data.trim().length === 0){
+                        showError();
+                    }else{
+                        try{
+                            var jsonData = JSON.parse( data );
+                            jsonToNimn(jsonData, "JSON", JSON.stringify(jsonData).length);
+                        }catch(e){
+                            //assume it XML
+                            data = data.replace(/>\s*</g, "><");
+                            if(parser.validate(data) === true){
+                                var jsonData = parser.parse(data,xmlOptions);
+                                jsonToNimn(jsonData, "XML", data.length);
+                            }else{
+                                showError();
+                            }
                         }
                     }
                 }
@@ -132,32 +136,30 @@
                 };
 
                 function displayData(type,nimndata, v1){
-                    if(nimndata){//display graph
-                        var v2 = nimndata.length;
-                        var diff = ((v1 - v2) * 100 )/ v1;
-                        diff = Math.round(diff * 100) / 100;
-                        $.dialog({
-                            title: "<span style='color: #008299'>Congrates!!</span>",
-                            columnClass: 'col-md-8 col-md-offset-4 col-xs-4 col-xs-offset-8',
-                            containerFluid: true,
-                            content: `<p>You've saved ${diff}% data.</p>
-                                <p>You can save more when you have fixed values field like enum or enable field level compression.</p>
-                                <canvas id="myChart" ></canvas>
-                            `,
-                            onContentReady : function(){
-                                showGraph(type, v1, v2);
-                            },
-                            escapeKey: true,
-                            backgroundDismiss: true
-                        });
+                    var v2 = nimndata.length;
+                    var diff = ((v1 - v2) * 100 )/ v1;
+                    diff = Math.round(diff * 100) / 100;
+                    $.dialog({
+                        title: "<span style='color: #008299'>Congrates!!</span>",
+                        columnClass: 'col-md-8 col-md-offset-4 col-xs-4 col-xs-offset-8',
+                        containerFluid: true,
+                        content: `<p>You've saved ${diff}% data.</p>
+                            <p>You can save more when you have fixed values field like enum or enable field level compression.</p>
+                            <canvas id="myChart" ></canvas>
+                        `,
+                        onContentReady : function(){
+                            showGraph(type, v1, v2);
+                        },
+                        escapeKey: true,
+                        backgroundDismiss: true
+                    });
+                }
 
-                        
-                    }else{
-                        $.dialog({
-                            title: "Sorry!",
-                            content: "Invalid or corrupted Data"
-                        });   
-                    }
+                function showError(){
+                    $.dialog({
+                        title: "Sorry!",
+                        content: "Invalid or corrupted Data"
+                    });   
                 }
 
                 function showGraph(type, v1, v2){
