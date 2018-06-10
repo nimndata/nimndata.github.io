@@ -73,7 +73,7 @@
                         </a>
                     </div>
                     <div class="flex-item" id="subtitle">Just Data</div>
-                    <div class="flex-item" id="desc"><p>Nimn data format is 60% or more smaller than JSON. It can help you to save disk space and network bandwidth.</p></div>
+                    <div class="flex-item" id="desc"><p>Nimn data format can save upto 85% of space / bandwidth.</p></div>
                 </div>
             </div>
             <div class="m-row"> 
@@ -84,8 +84,8 @@
             <script src="js/bootstrap.min.js"></script>
             <script src="js/jquery-confirm.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.10.0/parser.min.js"></script>
-            <script src="https://cdn.rawgit.com/nimndata/nimnjs-schema-builder/5a452c40/dist/nimn-schema-builder.js"></script>
-            <script src="https://cdn.rawgit.com/nimndata/nimnjs-node/edf87fb3/dist/nimn.js"></script>
+            <script src="https://cdn.rawgit.com/nimndata/nimnjs-schema-builder/1f50f478/dist/nimn-schema-builder.js"></script>
+            <script src="https://cdn.rawgit.com/nimndata/nimnjs/7cf21608/dist/nimn.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
             <script>
                 $(function(){
@@ -125,10 +125,8 @@
                 }
 
                 function jsonToNimn(jsonData, type, len){
-                    var schema = nimnSchemaBuilder.build(jsonData);
-                    var nimnInstance = new nimn();
-                    nimnInstance.addSchema(schema);
-                    var result = nimnInstance.encode(jsonData);
+                    var schema = nimn.buildSchema( nimnSchemaBuilder.build(jsonData) );
+                    var result = nimn.stringify(schema, jsonData);
 
                     displayData(type,result, len);
                 }
